@@ -16,7 +16,11 @@ model:
 
 .PHONY: gen-go
 gen-go:
-	goctl api go -api starbucks.api -dir .
+	goctl api go -api ./starbucks/apis/starbucks.api -dir ./
+
+.PHONY: gen-rpc
+gen-rpc:
+	goctl rpc protoc rpc/starbucks.proto --go-grpc_out=./rpc --go_out=./rpc --zrpc_out=./rpc
 
 .PHONY: build run push
 build:
