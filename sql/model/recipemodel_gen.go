@@ -21,15 +21,15 @@ var (
 	recipeRowsExpectAutoSet   = strings.Join(stringx.Remove(recipeFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	recipeRowsWithPlaceHolder = strings.Join(stringx.Remove(recipeFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheStarbucksRecipeIdPrefix       = "cache:starbucks:recipe:id:"
-	cacheStarbucksRecipeRecipeIdPrefix = "cache:starbucks:recipe:recipeId:"
+	cacheStarbucksRecipeIdPrefix              = "cache:starbucks:recipe:id:"
+	cacheStarbucksRecipeRecipeIdVersionPrefix = "cache:starbucks:recipe:recipeId:version:"
 )
 
 type (
 	recipeModel interface {
 		Insert(ctx context.Context, data *Recipe) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Recipe, error)
-		FindOneByRecipeId(ctx context.Context, recipeId string) (*Recipe, error)
+		FindOneByRecipeIdVersion(ctx context.Context, recipeId string, version int64) (*Recipe, error)
 		Update(ctx context.Context, data *Recipe) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -40,12 +40,14 @@ type (
 	}
 
 	Recipe struct {
-		Id         int64        `db:"id"`
-		CreatedAt  sql.NullTime `db:"created_at"`
-		UpdatedAt  sql.NullTime `db:"updated_at"`
-		DeletedAt  sql.NullTime `db:"deleted_at"`
-		RecipeId   string       `db:"recipe_id"`
-		RecipeName string       `db:"recipe_name"` // 配方名称
+		Id          int64          `db:"id"`
+		CreatedAt   sql.NullTime   `db:"created_at"`
+		UpdatedAt   sql.NullTime   `db:"updated_at"`
+		DeletedAt   sql.NullTime   `db:"deleted_at"`
+		RecipeId    string         `db:"recipe_id"`
+		RecipeName  string         `db:"recipe_name"` // 配方名称
+		Description sql.NullString `db:"description"` // 配方说明
+		Version     int64          `db:"version"`     // 配方版本，变更时升级版本
 	}
 )
 
@@ -63,11 +65,11 @@ func (m *defaultRecipeModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	starbucksRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeIdPrefix, id)
-	starbucksRecipeRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeRecipeIdPrefix, data.RecipeId)
+	starbucksRecipeRecipeIdVersionKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeRecipeIdVersionPrefix, data.RecipeId, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdKey)
+	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdVersionKey)
 	return err
 }
 
@@ -88,12 +90,12 @@ func (m *defaultRecipeModel) FindOne(ctx context.Context, id int64) (*Recipe, er
 	}
 }
 
-func (m *defaultRecipeModel) FindOneByRecipeId(ctx context.Context, recipeId string) (*Recipe, error) {
-	starbucksRecipeRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeRecipeIdPrefix, recipeId)
+func (m *defaultRecipeModel) FindOneByRecipeIdVersion(ctx context.Context, recipeId string, version int64) (*Recipe, error) {
+	starbucksRecipeRecipeIdVersionKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeRecipeIdVersionPrefix, recipeId, version)
 	var resp Recipe
-	err := m.QueryRowIndexCtx(ctx, &resp, starbucksRecipeRecipeIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `recipe_id` = ? limit 1", recipeRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, recipeId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, starbucksRecipeRecipeIdVersionKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `recipe_id` = ? and `version` = ? limit 1", recipeRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, recipeId, version); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -110,11 +112,11 @@ func (m *defaultRecipeModel) FindOneByRecipeId(ctx context.Context, recipeId str
 
 func (m *defaultRecipeModel) Insert(ctx context.Context, data *Recipe) (sql.Result, error) {
 	starbucksRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeIdPrefix, data.Id)
-	starbucksRecipeRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeRecipeIdPrefix, data.RecipeId)
+	starbucksRecipeRecipeIdVersionKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeRecipeIdVersionPrefix, data.RecipeId, data.Version)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, recipeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.RecipeId, data.RecipeName)
-	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, recipeRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.DeletedAt, data.RecipeId, data.RecipeName, data.Description, data.Version)
+	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdVersionKey)
 	return ret, err
 }
 
@@ -125,11 +127,11 @@ func (m *defaultRecipeModel) Update(ctx context.Context, newData *Recipe) error 
 	}
 
 	starbucksRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeIdPrefix, data.Id)
-	starbucksRecipeRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeRecipeIdPrefix, data.RecipeId)
+	starbucksRecipeRecipeIdVersionKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeRecipeIdVersionPrefix, data.RecipeId, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, recipeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.RecipeId, newData.RecipeName, newData.Id)
-	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdKey)
+		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.RecipeId, newData.RecipeName, newData.Description, newData.Version, newData.Id)
+	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdVersionKey)
 	return err
 }
 

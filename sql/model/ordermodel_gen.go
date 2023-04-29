@@ -46,7 +46,7 @@ type (
 		UpdatedAt  sql.NullTime `db:"updated_at"`
 		DeletedAt  sql.NullTime `db:"deleted_at"`
 		OrderId    string       `db:"order_id"`
-		ProductId  string       `db:"product_id"`  // 哪个产品的订单
+		ProductId  string       `db:"product_id"`  // 哪个产品的订单, o-cafe-xxx, o-vip-xxx, ……
 		Status     int64        `db:"status"`      // 订单状态。0,1,2,……
 		CreateTime time.Time    `db:"create_time"` // 订单创建时间
 		FinishTime sql.NullTime `db:"finish_time"` // 订单结束时间
