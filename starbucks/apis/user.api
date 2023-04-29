@@ -1,0 +1,27 @@
+import "common.api"
+
+type RegisterRequest {
+    UserName string `json:"userName" validate:"notblank"`
+    Password string `json:"password" validate:"notblank"`
+    UserType string `json:"userType" validate:"oneof=normal vip"`
+}
+
+type LoginRequest {
+    UserName string `json:"userName" validate:"notblank"`
+    Password string `json:"password" validate:"notblank"`
+}
+
+type UpgradeToVipRequest {
+    UserId string `json:"userId" validate:"notblank"`
+}
+
+@server(
+    prefix: /users
+)
+service starbucks-api {
+    @handler RegisterHandler
+    post /register (RegisterRequest) returns (User)
+
+    @handler LoginHandler
+    post /login (LoginRequest) returns (BaseResponse)
+}

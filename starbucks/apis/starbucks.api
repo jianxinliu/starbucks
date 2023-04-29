@@ -1,0 +1,14 @@
+syntax = "v1"
+
+info(
+	title: "starbuck api"
+	desc: "starbucks api"
+	author: "jianxinliu"
+	email: "xxx@xxx.com"
+	version: "0.0.1"
+)
+
+import "user.api"
+import "order.api"
+import "stock.api"
+import "wallet.api"

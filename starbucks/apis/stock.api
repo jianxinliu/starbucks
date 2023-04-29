@@ -1,0 +1,8 @@
+import "common.api"
+
+//@server(
+//    prefix: /stock
+//)
+//service starbucks-api {
+//
+//}

@@ -1,0 +1,21 @@
+import "common.api"
+
+type WalletDescribeResp {
+    BaseResponse
+    Balance float64 `json:"balance"`
+}
+
+type ChargeReq {
+    Amount float64 `json:"amount" validator:"gt=0"`
+}
+
+@server(
+    prefix: /wallet
+)
+service starbucks-api {
+    @handler DescribeWalletHandler
+    get /desc returns (WalletDescribeResp)
+
+    @handler ChargeHandler
+    post /charge (ChargeReq) returns (BaseResponse)
+}
