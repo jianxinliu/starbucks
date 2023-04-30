@@ -4,21 +4,21 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"starbucks/internal/logic"
-	"starbucks/internal/svc"
-	"starbucks/internal/types"
+	"starbucks/starbucks/internal/logic"
+	"starbucks/starbucks/internal/svc"
+	"starbucks/starbucks/internal/types"
 )
 
-func ChargeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func OrderDoneHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ChargeReq
+		var req types.OrderDoneReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := logic.NewChargeLogic(r.Context(), svcCtx)
-		resp, err := l.Charge(&req)
+		l := logic.NewOrderDoneLogic(r.Context(), svcCtx)
+		resp, err := l.OrderDone(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

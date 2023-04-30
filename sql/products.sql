@@ -1,9 +1,6 @@
 create table products
 (
     id          bigint unsigned auto_increment,
-    created_at  datetime(3)  null,
-    updated_at  datetime(3)  null,
-    deleted_at  datetime(3)  null,
 
     product_id  varchar(130) not null,
     name        varchar(100) not null,

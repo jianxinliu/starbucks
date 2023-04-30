@@ -40,12 +40,9 @@ type (
 	}
 
 	Material struct {
-		Id         int64        `db:"id"`
-		CreatedAt  sql.NullTime `db:"created_at"`
-		UpdatedAt  sql.NullTime `db:"updated_at"`
-		DeletedAt  sql.NullTime `db:"deleted_at"`
-		MaterialId string       `db:"material_id"` // 原料 id
-		MetaId     string       `db:"meta_id"`     // 原料类型 ID
+		Id         int64  `db:"id"`
+		MaterialId string `db:"material_id"` // 原料 id
+		MetaId     string `db:"meta_id"`     // 原料类型 ID
 	}
 )
 
@@ -112,8 +109,8 @@ func (m *defaultMaterialModel) Insert(ctx context.Context, data *Material) (sql.
 	starbucksMaterialIdKey := fmt.Sprintf("%s%v", cacheStarbucksMaterialIdPrefix, data.Id)
 	starbucksMaterialMaterialIdKey := fmt.Sprintf("%s%v", cacheStarbucksMaterialMaterialIdPrefix, data.MaterialId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, materialRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.MaterialId, data.MetaId)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, materialRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.MaterialId, data.MetaId)
 	}, starbucksMaterialIdKey, starbucksMaterialMaterialIdKey)
 	return ret, err
 }
@@ -128,7 +125,7 @@ func (m *defaultMaterialModel) Update(ctx context.Context, newData *Material) er
 	starbucksMaterialMaterialIdKey := fmt.Sprintf("%s%v", cacheStarbucksMaterialMaterialIdPrefix, data.MaterialId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, materialRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.MaterialId, newData.MetaId, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.MaterialId, newData.MetaId, newData.Id)
 	}, starbucksMaterialIdKey, starbucksMaterialMaterialIdKey)
 	return err
 }

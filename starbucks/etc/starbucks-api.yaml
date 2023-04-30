@@ -1,3 +1,15 @@
 Name: starbucks-api
 Host: 0.0.0.0
 Port: 8888
+
+Redis:
+  Host: localhost:6379
+
+Cache:
+  - Host: localhost:6379
+
+DataSource: root:123456@tcp(127.0.0.1:3306)/starbucks?charset=utf8&parseTime=true&loc=Local
+
+UserAuth:
+  Secret: ASJLMKDFPOPMALKNPJPP
+  Expired: 2592000

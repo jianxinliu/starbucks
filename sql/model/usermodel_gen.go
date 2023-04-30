@@ -40,16 +40,13 @@ type (
 	}
 
 	User struct {
-		Id           int64          `db:"id"`
-		CreatedAt    sql.NullTime   `db:"created_at"`
-		UpdatedAt    sql.NullTime   `db:"updated_at"`
-		DeletedAt    sql.NullTime   `db:"deleted_at"`
-		UserId       string         `db:"user_id"`
-		UserName     string         `db:"user_name"`
-		Password     string         `db:"password"`
-		UserType     sql.NullString `db:"user_type"`      // 用户类型 normal, vip1, vip2……
-		VipStartTime sql.NullTime   `db:"vip_start_time"` // 会员起始时间
-		VipEndTime   sql.NullTime   `db:"vip_end_time"`   // 会员到期时间
+		Id           int64        `db:"id"`
+		UserId       string       `db:"user_id"`
+		UserName     string       `db:"user_name"`
+		Password     string       `db:"password"`
+		UserType     string       `db:"user_type"`      // 用户类型 normal, vip1, vip2……
+		VipStartTime sql.NullTime `db:"vip_start_time"` // 会员起始时间
+		VipEndTime   sql.NullTime `db:"vip_end_time"`   // 会员到期时间
 	}
 )
 
@@ -116,8 +113,8 @@ func (m *defaultUserModel) Insert(ctx context.Context, data *User) (sql.Result, 
 	starbucksUserIdKey := fmt.Sprintf("%s%v", cacheStarbucksUserIdPrefix, data.Id)
 	starbucksUserUserIdKey := fmt.Sprintf("%s%v", cacheStarbucksUserUserIdPrefix, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.UserName, data.Password, data.UserType, data.VipStartTime, data.VipEndTime)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.UserName, data.Password, data.UserType, data.VipStartTime, data.VipEndTime)
 	}, starbucksUserIdKey, starbucksUserUserIdKey)
 	return ret, err
 }
@@ -132,7 +129,7 @@ func (m *defaultUserModel) Update(ctx context.Context, newData *User) error {
 	starbucksUserUserIdKey := fmt.Sprintf("%s%v", cacheStarbucksUserUserIdPrefix, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.UserId, newData.UserName, newData.Password, newData.UserType, newData.VipStartTime, newData.VipEndTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.UserName, newData.Password, newData.UserType, newData.VipStartTime, newData.VipEndTime, newData.Id)
 	}, starbucksUserIdKey, starbucksUserUserIdKey)
 	return err
 }

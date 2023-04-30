@@ -40,12 +40,9 @@ type (
 	}
 
 	Wallet struct {
-		Id        int64        `db:"id"`
-		CreatedAt sql.NullTime `db:"created_at"`
-		UpdatedAt sql.NullTime `db:"updated_at"`
-		DeletedAt sql.NullTime `db:"deleted_at"`
-		UserId    string       `db:"user_id"`
-		Balance   int64        `db:"balance"` // 用户余额，单位： 分
+		Id      int64  `db:"id"`
+		UserId  string `db:"user_id"`
+		Balance int64  `db:"balance"` // 用户余额，单位： 分
 	}
 )
 
@@ -112,8 +109,8 @@ func (m *defaultWalletModel) Insert(ctx context.Context, data *Wallet) (sql.Resu
 	starbucksWalletIdKey := fmt.Sprintf("%s%v", cacheStarbucksWalletIdPrefix, data.Id)
 	starbucksWalletUserIdKey := fmt.Sprintf("%s%v", cacheStarbucksWalletUserIdPrefix, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, walletRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.UserId, data.Balance)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, walletRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.Balance)
 	}, starbucksWalletIdKey, starbucksWalletUserIdKey)
 	return ret, err
 }
@@ -128,7 +125,7 @@ func (m *defaultWalletModel) Update(ctx context.Context, newData *Wallet) error 
 	starbucksWalletUserIdKey := fmt.Sprintf("%s%v", cacheStarbucksWalletUserIdPrefix, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, walletRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.UserId, newData.Balance, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.Balance, newData.Id)
 	}, starbucksWalletIdKey, starbucksWalletUserIdKey)
 	return err
 }

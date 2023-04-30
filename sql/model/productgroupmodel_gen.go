@@ -41,9 +41,6 @@ type (
 
 	ProductGroup struct {
 		Id        int64          `db:"id"`
-		CreatedAt sql.NullTime   `db:"created_at"`
-		UpdatedAt sql.NullTime   `db:"updated_at"`
-		DeletedAt sql.NullTime   `db:"deleted_at"`
 		GroupId   string         `db:"group_id"`
 		GroupName sql.NullString `db:"group_name"` // 分类名称: 咖啡，果汁……
 		GroupDesc sql.NullString `db:"group_desc"`
@@ -113,8 +110,8 @@ func (m *defaultProductGroupModel) Insert(ctx context.Context, data *ProductGrou
 	starbucksProductGroupGroupIdKey := fmt.Sprintf("%s%v", cacheStarbucksProductGroupGroupIdPrefix, data.GroupId)
 	starbucksProductGroupIdKey := fmt.Sprintf("%s%v", cacheStarbucksProductGroupIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, productGroupRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.GroupId, data.GroupName, data.GroupDesc)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, productGroupRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.GroupId, data.GroupName, data.GroupDesc)
 	}, starbucksProductGroupGroupIdKey, starbucksProductGroupIdKey)
 	return ret, err
 }
@@ -129,7 +126,7 @@ func (m *defaultProductGroupModel) Update(ctx context.Context, newData *ProductG
 	starbucksProductGroupIdKey := fmt.Sprintf("%s%v", cacheStarbucksProductGroupIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, productGroupRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.GroupId, newData.GroupName, newData.GroupDesc, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.GroupId, newData.GroupName, newData.GroupDesc, newData.Id)
 	}, starbucksProductGroupGroupIdKey, starbucksProductGroupIdKey)
 	return err
 }

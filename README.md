@@ -76,3 +76,12 @@
 先下载： `go install github.com/zeromicro/goctl-swagger@latest`
 
 具体可参考： https://github.com/zeromicro/goctl-swagger
+
+### openapi 问题（还未解决，goctl-swagger 不支持 api 文件嵌套）
+
+先采用这个 go install github.com/wumitech-com/goctl-openapi3@latest，后期改掉
+
+### JWT 登录控制
+
+1. 实现一个用于校验用户登录与否的功能
+2. 编写中间件来校验每个请求的 token

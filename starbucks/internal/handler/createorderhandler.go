@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"starbucks/internal/logic"
-	"starbucks/internal/svc"
-	"starbucks/internal/types"
+	"starbucks/starbucks/internal/logic"
+	"starbucks/starbucks/internal/svc"
+	"starbucks/starbucks/internal/types"
 )
 
 func CreateOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

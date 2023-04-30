@@ -1,39 +1,40 @@
 import "common.api"
 
 type CreateOrderRequest {
-    OrderType string `json:"orderType" validator:"notblank oneof=cafe vip charge"`
-    ProductId string `json:"productId" validator:"notblank"`
-    UserId string `json:"userId" validator:"notblank"`
-    Quantity int `json:"quantity" validator:"gt=0"`
+	OrderType string `json:"orderType" validator:"notblank oneof=cafe vip charge"`
+	ProductId string `json:"productId" validator:"notblank"`
+	UserId    string `json:"userId" validator:"notblank"`
+	Quantity  int    `json:"quantity" validator:"gt=0"`
 }
 
 type CreateOrderResponse {
-    BaseResponse
-    TrxNo string `json:"trxNo"`
+	BaseResponse
+	TrxNo string `json:"trxNo"`
 }
 
 type OrderDoneReq {
-    OrderId string `json:"orderId" validator="notblank"`
-    Status int `json:"status" validator="gt=0"`
+	OrderId string `json:"orderId" validator="notblank"`
+	Status  int    `json:"status" validator="gt=0"`
 }
 
 type PayReq {
-    OrderId string `json:"orderId" validator="notblank"`
-    Amount float64 `json:"amount" validator="gt=0"`
+	OrderId string  `json:"orderId" validator="notblank"`
+	Amount  float64 `json:"amount" validator="gt=0"`
 }
 
 @server(
-    prefix: /order
+	middleware: CustomJwt
+	prefix: /order
 )
 service starbucks-api {
-    // 咖啡订单，充值订单，充会员订单
-    @handler CreateOrderHandler
-    post /create (CreateOrderRequest) returns (CreateOrderResponse)
-
-    // 订单完成
-    @handler OrderDoneHandler
-    post /done (OrderDoneReq) returns (BaseResponse)
-
-    @handler PayHandler
-    post /pay (PayReq) returns (BaseResponse)
+	// 咖啡订单，充值订单，充会员订单
+	@handler CreateOrderHandler
+	post /create (CreateOrderRequest) returns (CreateOrderResponse)
+	
+	// 订单完成
+	@handler OrderDoneHandler
+	post /done (OrderDoneReq) returns (BaseResponse)
+	
+	@handler PayHandler
+	post /pay (PayReq) returns (BaseResponse)
 }

@@ -4,21 +4,21 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"starbucks/internal/logic"
-	"starbucks/internal/svc"
-	"starbucks/internal/types"
+	"starbucks/starbucks/internal/logic"
+	"starbucks/starbucks/internal/svc"
+	"starbucks/starbucks/internal/types"
 )
 
-func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.LoginRequest
+		var req types.RegisterRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := logic.NewLoginLogic(r.Context(), svcCtx)
-		resp, err := l.Login(&req)
+		l := logic.NewRegisterLogic(r.Context(), svcCtx)
+		resp, err := l.Register(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

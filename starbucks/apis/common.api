@@ -1,12 +1,11 @@
-
 type BaseResponse {
-    RetCode int `json:"code"`
-    Message string `json:"message"`
+	RetCode int    `json:"code"`
+	Message string `json:"message"`
 }
 
 type User {
-    UserId string `json:"userId"`
-    UserName string `json:"userName"`
-    Password string `json:"password"`
-    UserType string `json:"userType" validate:"oneof=normal vip"` // 用户类型 normal, vip……
+	UserId   string `json:"userId"`
+	UserName string `json:"userName"`
+	Password string `json:"password"`
+	UserType string `json:"userType" validate:"oneof=normal vip"` // 用户类型 normal, vip……
 }

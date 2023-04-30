@@ -41,9 +41,6 @@ type (
 
 	MaterialMeta struct {
 		Id           int64          `db:"id"`
-		CreatedAt    sql.NullTime   `db:"created_at"`
-		UpdatedAt    sql.NullTime   `db:"updated_at"`
-		DeletedAt    sql.NullTime   `db:"deleted_at"`
 		MaterialId   string         `db:"material_id"`   // 原料 ID
 		MaterialType string         `db:"material_type"` // 原料类型。豆子，糖，奶，巧克力……
 		Name         sql.NullString `db:"name"`
@@ -114,8 +111,8 @@ func (m *defaultMaterialMetaModel) Insert(ctx context.Context, data *MaterialMet
 	starbucksMaterialMetaIdKey := fmt.Sprintf("%s%v", cacheStarbucksMaterialMetaIdPrefix, data.Id)
 	starbucksMaterialMetaMaterialIdKey := fmt.Sprintf("%s%v", cacheStarbucksMaterialMetaMaterialIdPrefix, data.MaterialId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, materialMetaRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.MaterialId, data.MaterialType, data.Name, data.Unit)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, materialMetaRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.MaterialId, data.MaterialType, data.Name, data.Unit)
 	}, starbucksMaterialMetaIdKey, starbucksMaterialMetaMaterialIdKey)
 	return ret, err
 }
@@ -130,7 +127,7 @@ func (m *defaultMaterialMetaModel) Update(ctx context.Context, newData *Material
 	starbucksMaterialMetaMaterialIdKey := fmt.Sprintf("%s%v", cacheStarbucksMaterialMetaMaterialIdPrefix, data.MaterialId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, materialMetaRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.MaterialId, newData.MaterialType, newData.Name, newData.Unit, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.MaterialId, newData.MaterialType, newData.Name, newData.Unit, newData.Id)
 	}, starbucksMaterialMetaIdKey, starbucksMaterialMetaMaterialIdKey)
 	return err
 }

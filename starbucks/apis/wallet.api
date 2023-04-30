@@ -10,6 +10,7 @@ type ChargeReq {
 }
 
 @server(
+    middleware: CustomJwt
     prefix: /wallet
 )
 service starbucks-api {

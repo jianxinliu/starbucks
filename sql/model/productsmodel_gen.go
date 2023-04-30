@@ -41,9 +41,6 @@ type (
 
 	Products struct {
 		Id          int64           `db:"id"`
-		CreatedAt   sql.NullTime    `db:"created_at"`
-		UpdatedAt   sql.NullTime    `db:"updated_at"`
-		DeletedAt   sql.NullTime    `db:"deleted_at"`
 		ProductId   string          `db:"product_id"`
 		Name        string          `db:"name"`
 		Description sql.NullString  `db:"description"`
@@ -117,8 +114,8 @@ func (m *defaultProductsModel) Insert(ctx context.Context, data *Products) (sql.
 	starbucksProductsIdKey := fmt.Sprintf("%s%v", cacheStarbucksProductsIdPrefix, data.Id)
 	starbucksProductsProductIdKey := fmt.Sprintf("%s%v", cacheStarbucksProductsProductIdPrefix, data.ProductId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, productsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.ProductId, data.Name, data.Description, data.Image, data.GroupId, data.Price, data.Discount)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, productsRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ProductId, data.Name, data.Description, data.Image, data.GroupId, data.Price, data.Discount)
 	}, starbucksProductsIdKey, starbucksProductsProductIdKey)
 	return ret, err
 }
@@ -133,7 +130,7 @@ func (m *defaultProductsModel) Update(ctx context.Context, newData *Products) er
 	starbucksProductsProductIdKey := fmt.Sprintf("%s%v", cacheStarbucksProductsProductIdPrefix, data.ProductId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, productsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.ProductId, newData.Name, newData.Description, newData.Image, newData.GroupId, newData.Price, newData.Discount, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ProductId, newData.Name, newData.Description, newData.Image, newData.GroupId, newData.Price, newData.Discount, newData.Id)
 	}, starbucksProductsIdKey, starbucksProductsProductIdKey)
 	return err
 }

@@ -40,13 +40,10 @@ type (
 	}
 
 	RecipeItem struct {
-		Id         int64        `db:"id"`
-		CreatedAt  sql.NullTime `db:"created_at"`
-		UpdatedAt  sql.NullTime `db:"updated_at"`
-		DeletedAt  sql.NullTime `db:"deleted_at"`
-		RecipeId   string       `db:"recipe_id"`
-		MaterialId string       `db:"material_id"` // 使用那种原料
-		Quantity   float64      `db:"quantity"`    // 原料数量
+		Id         int64   `db:"id"`
+		RecipeId   string  `db:"recipe_id"`
+		MaterialId string  `db:"material_id"` // 使用那种原料
+		Quantity   float64 `db:"quantity"`    // 原料数量
 	}
 )
 
@@ -113,8 +110,8 @@ func (m *defaultRecipeItemModel) Insert(ctx context.Context, data *RecipeItem) (
 	starbucksRecipeItemIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeItemIdPrefix, data.Id)
 	starbucksRecipeItemRecipeIdMaterialIdKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeItemRecipeIdMaterialIdPrefix, data.RecipeId, data.MaterialId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, recipeItemRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.RecipeId, data.MaterialId, data.Quantity)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, recipeItemRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.RecipeId, data.MaterialId, data.Quantity)
 	}, starbucksRecipeItemIdKey, starbucksRecipeItemRecipeIdMaterialIdKey)
 	return ret, err
 }
@@ -129,7 +126,7 @@ func (m *defaultRecipeItemModel) Update(ctx context.Context, newData *RecipeItem
 	starbucksRecipeItemRecipeIdMaterialIdKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeItemRecipeIdMaterialIdPrefix, data.RecipeId, data.MaterialId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, recipeItemRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.RecipeId, newData.MaterialId, newData.Quantity, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.RecipeId, newData.MaterialId, newData.Quantity, newData.Id)
 	}, starbucksRecipeItemIdKey, starbucksRecipeItemRecipeIdMaterialIdKey)
 	return err
 }

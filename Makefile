@@ -16,7 +16,7 @@ model:
 
 .PHONY: gen-go
 gen-go:
-	goctl api go -api ./starbucks/apis/starbucks.api -dir ./
+	goctl api go -api ./starbucks/apis/starbucks.api -dir ./starbucks
 
 .PHONY: gen-rpc
 gen-rpc:
@@ -30,8 +30,16 @@ run:
 	go run starbucks.go
 
 .PHONY: swagger
+swagger: genFile := docs/starbucks-api.swagger.json
 swagger:
-	goctl api plugin -plugin goctl-swagger="swagger -filename docs/starbucks-api.swagger.json" -api ./starbucks/starbucks.api -dir .
+	goctl api format -dir starbucks/apis
+	goctl api plugin -plugin goctl-openapi3="openapi -filename $(genFile)" -api starbucks/apis/starbucks.api -dir ./starbucks
+	sed -i '' s'/^  "components": {/  "components": {\n    "securitySchemes": {"bearerAuth": {"type": "http","scheme": "bearer","bearerFormat": "JWT"}},/' $(genFile)
+	sed -i '' s'/^  "components": {/  "security": [{"bearerAuth":[]}],\n  "components": {/' $(genFile)
+
+#.PHONY: swagger
+#swagger:
+#	goctl api plugin -plugin goctl-swagger="swagger -filename docs/starbucks-api.swagger.json" -api ./starbucks/apis/starbucks.api -dir .
 
 .PHONY: api-build
 api-build:

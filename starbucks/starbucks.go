@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-
+	"starbucks/starbucks/global"
 	"starbucks/starbucks/internal/config"
 	"starbucks/starbucks/internal/handler"
 	"starbucks/starbucks/internal/svc"
@@ -12,13 +12,15 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", "etc/starbucks-api.yaml", "the config file")
+var configFile = flag.String("f", "./starbucks/etc/starbucks-api.yaml", "the config file")
 
 func main() {
 	flag.Parse()
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+
+	global.Config = &c
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()

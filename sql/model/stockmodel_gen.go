@@ -41,15 +41,12 @@ type (
 	}
 
 	Stock struct {
-		Id         int64        `db:"id"`
-		CreatedAt  sql.NullTime `db:"created_at"`
-		UpdatedAt  sql.NullTime `db:"updated_at"`
-		DeletedAt  sql.NullTime `db:"deleted_at"`
-		StockId    string       `db:"stock_id"`    // 库存 id
-		MaterialId string       `db:"material_id"` // 存储的哪种原料
-		Amount     int64        `db:"amount"`      // 入库数量
-		Count      int64        `db:"count"`       // 当前数量
-		InTime     time.Time    `db:"in_time"`     // 原料进库时间
+		Id         int64     `db:"id"`
+		StockId    string    `db:"stock_id"`    // 库存 id
+		MaterialId string    `db:"material_id"` // 存储的哪种原料
+		Amount     int64     `db:"amount"`      // 入库数量
+		Count      int64     `db:"count"`       // 当前数量
+		InTime     time.Time `db:"in_time"`     // 原料进库时间
 	}
 )
 
@@ -116,8 +113,8 @@ func (m *defaultStockModel) Insert(ctx context.Context, data *Stock) (sql.Result
 	starbucksStockIdKey := fmt.Sprintf("%s%v", cacheStarbucksStockIdPrefix, data.Id)
 	starbucksStockStockIdKey := fmt.Sprintf("%s%v", cacheStarbucksStockStockIdPrefix, data.StockId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, stockRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.StockId, data.MaterialId, data.Amount, data.Count, data.InTime)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, stockRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.StockId, data.MaterialId, data.Amount, data.Count, data.InTime)
 	}, starbucksStockIdKey, starbucksStockStockIdKey)
 	return ret, err
 }
@@ -132,7 +129,7 @@ func (m *defaultStockModel) Update(ctx context.Context, newData *Stock) error {
 	starbucksStockStockIdKey := fmt.Sprintf("%s%v", cacheStarbucksStockStockIdPrefix, data.StockId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, stockRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.StockId, newData.MaterialId, newData.Amount, newData.Count, newData.InTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.StockId, newData.MaterialId, newData.Amount, newData.Count, newData.InTime, newData.Id)
 	}, starbucksStockIdKey, starbucksStockStockIdKey)
 	return err
 }

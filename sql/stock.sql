@@ -1,9 +1,6 @@
 create table stock
 (
     id          bigint unsigned auto_increment,
-    created_at  datetime(3)         null,
-    updated_at  datetime(3)         null,
-    deleted_at  datetime(3)         null,
 
     stock_id    varchar(30)         not null comment '库存 id',
     material_id varchar(30)         not null comment '存储的哪种原料',

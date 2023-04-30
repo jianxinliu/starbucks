@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"starbucks/internal/logic"
-	"starbucks/internal/svc"
+	"starbucks/starbucks/internal/logic"
+	"starbucks/starbucks/internal/svc"
 )
 
 func DescribeWalletHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

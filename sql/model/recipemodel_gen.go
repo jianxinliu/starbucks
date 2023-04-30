@@ -41,9 +41,6 @@ type (
 
 	Recipe struct {
 		Id          int64          `db:"id"`
-		CreatedAt   sql.NullTime   `db:"created_at"`
-		UpdatedAt   sql.NullTime   `db:"updated_at"`
-		DeletedAt   sql.NullTime   `db:"deleted_at"`
 		RecipeId    string         `db:"recipe_id"`
 		RecipeName  string         `db:"recipe_name"` // 配方名称
 		Description sql.NullString `db:"description"` // 配方说明
@@ -114,8 +111,8 @@ func (m *defaultRecipeModel) Insert(ctx context.Context, data *Recipe) (sql.Resu
 	starbucksRecipeIdKey := fmt.Sprintf("%s%v", cacheStarbucksRecipeIdPrefix, data.Id)
 	starbucksRecipeRecipeIdVersionKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeRecipeIdVersionPrefix, data.RecipeId, data.Version)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, recipeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.RecipeId, data.RecipeName, data.Description, data.Version)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, recipeRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.RecipeId, data.RecipeName, data.Description, data.Version)
 	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdVersionKey)
 	return ret, err
 }
@@ -130,7 +127,7 @@ func (m *defaultRecipeModel) Update(ctx context.Context, newData *Recipe) error 
 	starbucksRecipeRecipeIdVersionKey := fmt.Sprintf("%s%v:%v", cacheStarbucksRecipeRecipeIdVersionPrefix, data.RecipeId, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, recipeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.RecipeId, newData.RecipeName, newData.Description, newData.Version, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.RecipeId, newData.RecipeName, newData.Description, newData.Version, newData.Id)
 	}, starbucksRecipeIdKey, starbucksRecipeRecipeIdVersionKey)
 	return err
 }

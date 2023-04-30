@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 
-	"starbucks/internal/svc"
-	"starbucks/internal/types"
+	"starbucks/starbucks/internal/svc"
+	"starbucks/starbucks/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

@@ -42,9 +42,6 @@ type (
 
 	Order struct {
 		Id         int64        `db:"id"`
-		CreatedAt  sql.NullTime `db:"created_at"`
-		UpdatedAt  sql.NullTime `db:"updated_at"`
-		DeletedAt  sql.NullTime `db:"deleted_at"`
 		OrderId    string       `db:"order_id"`
 		ProductId  string       `db:"product_id"`  // 哪个产品的订单, o-cafe-xxx, o-vip-xxx, ……
 		Status     int64        `db:"status"`      // 订单状态。0,1,2,……
@@ -116,8 +113,8 @@ func (m *defaultOrderModel) Insert(ctx context.Context, data *Order) (sql.Result
 	starbucksOrderIdKey := fmt.Sprintf("%s%v", cacheStarbucksOrderIdPrefix, data.Id)
 	starbucksOrderOrderIdKey := fmt.Sprintf("%s%v", cacheStarbucksOrderOrderIdPrefix, data.OrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, orderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DeletedAt, data.OrderId, data.ProductId, data.Status, data.FinishTime)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, orderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.OrderId, data.ProductId, data.Status, data.FinishTime)
 	}, starbucksOrderIdKey, starbucksOrderOrderIdKey)
 	return ret, err
 }
@@ -132,7 +129,7 @@ func (m *defaultOrderModel) Update(ctx context.Context, newData *Order) error {
 	starbucksOrderOrderIdKey := fmt.Sprintf("%s%v", cacheStarbucksOrderOrderIdPrefix, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, orderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DeletedAt, newData.OrderId, newData.ProductId, newData.Status, newData.FinishTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.OrderId, newData.ProductId, newData.Status, newData.FinishTime, newData.Id)
 	}, starbucksOrderIdKey, starbucksOrderOrderIdKey)
 	return err
 }

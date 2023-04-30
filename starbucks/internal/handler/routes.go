@@ -13,10 +13,59 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
-				Path:    "/from/:name",
-				Handler: StarbucksHandler(serverCtx),
+				Method:  http.MethodPost,
+				Path:    "/register",
+				Handler: RegisterHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/login",
+				Handler: LoginHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/users"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CustomJwt},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/create",
+					Handler: CreateOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/done",
+					Handler: OrderDoneHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/pay",
+					Handler: PayHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/order"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CustomJwt},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/desc",
+					Handler: DescribeWalletHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/charge",
+					Handler: ChargeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/wallet"),
 	)
 }
