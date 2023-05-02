@@ -33,7 +33,7 @@ run:
 swagger: genFile := docs/starbucks-api.swagger.json
 swagger:
 	goctl api format -dir starbucks/apis
-	goctl api plugin -plugin goctl-openapi3="openapi -filename $(genFile)" -api starbucks/apis/starbucks.api -dir ./starbucks
+	goctl api plugin -plugin goctl-openapi3="openapi -filename $(genFile)" -api starbucks/apis/starbucks.api -dir ./
 	sed -i '' s'/^  "components": {/  "components": {\n    "securitySchemes": {"bearerAuth": {"type": "http","scheme": "bearer","bearerFormat": "JWT"}},/' $(genFile)
 	sed -i '' s'/^  "components": {/  "security": [{"bearerAuth":[]}],\n  "components": {/' $(genFile)
 

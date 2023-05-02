@@ -1,83 +1,482 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.3",
   "info": {
-    "title": "",
-    "version": ""
+    "title": "starbuck api",
+    "description": "starbucks api",
+    "version": "0.0.1"
   },
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "paths": {
-    "/from/{name}": {
-      "get": {
-        "operationId": "StarbucksHandler",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/Response"
+    "/ops/product/add": {
+      "post": {
+        "operationId": "AddProductHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "desc",
+                  "image",
+                  "groupId",
+                  "price",
+                  "discount"
+                ],
+                "properties": {
+                  "desc": {
+                    "type": "string"
+                  },
+                  "discount": {
+                    "type": "number"
+                  },
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "integer"
+                  }
+                }
+              }
             }
           }
         },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "type": "string"
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
           }
-        ],
-        "requestBody": {},
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/ops/product_g/add": {
+      "post": {
+        "operationId": "AddProductGroupHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "desc"
+                ],
+                "properties": {
+                  "desc": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/order/create": {
+      "post": {
+        "operationId": "CreateOrderHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "orderType",
+                  "productId",
+                  "quantity"
+                ],
+                "properties": {
+                  "orderType": {
+                    "type": "string"
+                  },
+                  "productId": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOrderResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/order/done": {
+      "post": {
+        "operationId": "OrderDoneHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "orderId"
+                ],
+                "properties": {
+                  "orderId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/order/pay": {
+      "post": {
+        "operationId": "PayHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "orderId"
+                ],
+                "properties": {
+                  "orderId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "operationId": "LoginHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userName",
+                  "password"
+                ],
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/users/register": {
+      "post": {
+        "operationId": "RegisterHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userName",
+                  "password"
+                ],
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/wallet/charge": {
+      "post": {
+        "operationId": "ChargeHandler",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "starbucks-api"
+        ]
+      }
+    },
+    "/wallet/desc": {
+      "get": {
+        "operationId": "DescribeWalletHandler",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletDescribeResp"
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "starbucks-api"
         ]
       }
     }
   },
-  "definitions": {
-    "Request": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
+  "security": [{"bearerAuth":[]}],
+  "components": {
+    "securitySchemes": {"bearerAuth": {"type": "http","scheme": "bearer","bearerFormat": "JWT"}},
+    "schemas": {
+      "BaseResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
         }
       },
-      "title": "Request",
-      "required": [
-        "name"
-      ]
-    },
-    "Response": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
+      "CreateOrderResponse": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "orderId"
+            ],
+            "properties": {
+              "orderId": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          }
+        ]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          }
         }
       },
-      "title": "Response",
-      "required": [
-        "message"
-      ]
+      "UpgradeToVipRequest": {
+        "type": "object",
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "userId",
+          "userName",
+          "password",
+          "userType"
+        ],
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "userType": {
+            "type": "string",
+            "description": "用户类型 normal, vip……"
+          }
+        }
+      },
+      "WalletDescribeResp": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "balance"
+            ],
+            "properties": {
+              "balance": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          }
+        ]
+      }
     }
   },
-  "securityDefinitions": {
-    "apiKey": {
-      "type": "apiKey",
-      "description": "Enter JWT Bearer token **_only_**",
-      "name": "Authorization",
-      "in": "header"
-    }
-  },
-  "security": [
+  "tags": [
     {
-      "apiKey": []
+      "name": "starbucks-api"
     }
   ]
 }

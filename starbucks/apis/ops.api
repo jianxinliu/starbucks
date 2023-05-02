@@ -1,27 +1,27 @@
 import "common.api"
 
 type AddProductGroupReq {
-    Name string `json:"name" validator:"notblank"`
-    Desc string `json:"desc"`
+	Name string `json:"name" validator:"notblank"`
+	Desc string `json:"desc"`
 }
 
 type AddProductReq {
-    Name string `json:"name" validator:"notblank"`
-    Description string `json:"desc"`
-    Image string `json:"image"`
-    GroupId string `json:"groupId"`
-    Price int `json:"price"`
-    Discount float64 `json:"discount"`
+	Name        string  `json:"name" validator:"notblank"`
+	Description string  `json:"desc"`
+	Image       string  `json:"image"`
+	GroupId     string  `json:"groupId"`
+	Price       int     `json:"price"`
+	Discount    float64 `json:"discount"`
 }
 
 @server(
-    middleware : CustomJwt
-    prefix: /ops
+	middleware : CustomJwt
+	prefix: /ops
 )
 service starbucks-api {
-    @handler AddProductGroupHandler
-    post /product_g/add (AddProductGroupReq) returns (BaseResponse)
-
-    @handler AddProductHandler
-    post /product/add (AddProductReq) returns (BaseResponse)
+	@handler AddProductGroupHandler
+	post /product_g/add (AddProductGroupReq) returns (BaseResponse)
+	
+	@handler AddProductHandler
+	post /product/add (AddProductReq) returns (BaseResponse)
 }

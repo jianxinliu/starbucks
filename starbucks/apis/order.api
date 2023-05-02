@@ -12,11 +12,11 @@ type CreateOrderResponse {
 }
 
 type OrderDoneReq {
-	OrderId string `json:"orderId" validator="notblank"`
+	OrderId string `json:"orderId" validator:"notblank"`
 }
 
 type PayReq {
-	OrderId string  `json:"orderId" validator="notblank"`
+	OrderId string `json:"orderId" validator:"notblank"`
 }
 
 @server(
