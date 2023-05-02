@@ -6,7 +6,6 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"starbucks/starbucks/utils"
 )
 
 var _ OrderModel = (*customOrderModel)(nil)
@@ -17,8 +16,6 @@ type (
 	OrderModel interface {
 		orderModel
 		FindOneBy(ctx context.Context, filedName, fieldValue string) (*Order, error)
-		NewOrderId(ctx context.Context) string
-		NewTrxNo(ctx context.Context) string
 	}
 
 	customOrderModel struct {
@@ -51,28 +48,4 @@ func (m *defaultOrderModel) FindOneBy(ctx context.Context, fieldName, fieldValue
 	default:
 		return nil, err
 	}
-}
-
-func (m customOrderModel) NewOrderId(ctx context.Context) string {
-	id := utils.NewOrderId()
-	for i := 0; i < 10; i++ {
-		_, err := m.FindOneByOrderId(ctx, id)
-		if err != nil && err == sqlx.ErrNotFound {
-			break
-		}
-		id = utils.NewOrderId()
-	}
-	return id
-}
-
-func (m customOrderModel) NewTrxNo(ctx context.Context) string {
-	id := utils.NewTrxNo()
-	for i := 0; i < 10; i++ {
-		_, err := m.FindOneBy(ctx, "trx_no", id)
-		if err != nil && err == sqlx.ErrNotFound {
-			break
-		}
-		id = utils.NewTrxNo()
-	}
-	return id
 }

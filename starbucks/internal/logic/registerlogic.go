@@ -26,7 +26,10 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.BaseResponse, err error) {
 	resp = new(types.BaseResponse)
-	userId := utils.NewUserId()
+	userId := utils.NewUserId(func(id string) error {
+		_, e := l.svcCtx.UserModel.FindOneByUserId(l.ctx, id)
+		return e
+	})
 	user := &model.User{
 		UserName: req.UserName,
 		Password: req.Password,

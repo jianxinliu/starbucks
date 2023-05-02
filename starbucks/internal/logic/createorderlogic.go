@@ -32,16 +32,26 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderRequest) (resp *types.CreateOrderResponse, err error) {
 	resp = new(types.CreateOrderResponse)
 
+	orderId := utils.NewOrderId(func(id string) error {
+		_, e := l.svcCtx.OrderModel.FindOneByOrderId(l.ctx, id)
+		return e
+	})
+
+	trxNo := utils.NewTrxNo(func(id string) error {
+		_, e := l.svcCtx.OrderModel.FindOneBy(l.ctx, "trx_no", id)
+		return e
+	})
+
 	userId := l.ctx.Value("userId").(string)
 	order := &model.Order{
-		OrderId:    l.svcCtx.OrderModel.NewOrderId(l.ctx),
+		OrderId:    orderId,
 		ProductId:  req.ProductId,
 		Status:     constants.STATUS_ORDER_INIT,
 		UserId:     userId,
 		CreateTime: time.Now(),
 		OrderType:  req.OrderType,
 		Quantity:   float64(req.Quantity),
-		TrxNo:      utils.ToSqlNullString(l.svcCtx.OrderModel.NewTrxNo(l.ctx)),
+		TrxNo:      utils.ToSqlNullString(trxNo),
 	}
 	_, err = l.svcCtx.OrderModel.Insert(l.ctx, order)
 	if err != nil {
