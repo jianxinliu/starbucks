@@ -12,6 +12,7 @@ type (
 	// and implement the added methods in customProductsModel.
 	ProductsModel interface {
 		productsModel
+		GetPrice(product *Products, quantity float64) int64
 	}
 
 	customProductsModel struct {
@@ -24,4 +25,8 @@ func NewProductsModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option
 	return &customProductsModel{
 		defaultProductsModel: newProductsModel(conn, c, opts...),
 	}
+}
+
+func (c *customProductsModel) GetPrice(product *Products, quantity float64) int64 {
+	return int64(float64(product.Price.Int64) * product.Discount * quantity)
 }

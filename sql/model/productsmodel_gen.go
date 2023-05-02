@@ -40,14 +40,14 @@ type (
 	}
 
 	Products struct {
-		Id          int64           `db:"id"`
-		ProductId   string          `db:"product_id"`
-		Name        string          `db:"name"`
-		Description sql.NullString  `db:"description"`
-		Image       sql.NullString  `db:"image"`
-		GroupId     string          `db:"group_id"` // 产品分组
-		Price       sql.NullInt64   `db:"price"`    // 价格，单位：分
-		Discount    sql.NullFloat64 `db:"discount"` // 折扣
+		Id          int64          `db:"id"`
+		ProductId   string         `db:"product_id"`
+		Name        string         `db:"name"`
+		Description sql.NullString `db:"description"`
+		Image       sql.NullString `db:"image"`
+		GroupId     string         `db:"group_id"` // 产品分组
+		Price       sql.NullInt64  `db:"price"`    // 价格，单位：分
+		Discount    float64        `db:"discount"` // 折扣
 	}
 )
 

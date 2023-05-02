@@ -9,7 +9,7 @@ create table products
 
     group_id    varchar(30)  not null comment '产品分组',
     price       int comment '价格，单位：分',
-    discount    numeric comment '折扣',
+    discount    numeric default 1 comment '折扣',
 
     primary key (id),
     unique key (product_id)
