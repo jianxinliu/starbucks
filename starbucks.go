@@ -7,6 +7,7 @@ import (
 	"starbucks/internal/config"
 	"starbucks/internal/handler"
 	"starbucks/internal/svc"
+	asynqServer "starbucks/starbucks/server"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -24,6 +25,7 @@ func main() {
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
+	asynqServer.InitAsynqServer(ctx)
 	handler.RegisterHandlers(server, ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)

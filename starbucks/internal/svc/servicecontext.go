@@ -15,7 +15,13 @@ type ServiceContext struct {
 	Redis     *redis.Redis
 	CustomJwt rest.Middleware
 
-	UserModel model.UserModel
+	DbConn sqlx.SqlConn
+
+	UserModel    model.UserModel
+	OrderModel   model.OrderModel
+	ProductModel model.ProductsModel
+	PaymentModel model.PaymentModel
+	WalletModel  model.WalletModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -25,9 +31,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.DataSource)
 
 	return &ServiceContext{
-		Config:    c,
-		Redis:     global.Redis,
-		CustomJwt: middleware.NewCustomJwtMiddleware().Handle,
-		UserModel: model.NewUserModel(conn, c.Cache),
+		Config:       c,
+		Redis:        global.Redis,
+		CustomJwt:    middleware.NewCustomJwtMiddleware().Handle,
+		DbConn:       conn,
+		UserModel:    model.NewUserModel(conn, c.Cache),
+		OrderModel:   model.NewOrderModel(conn, c.Cache),
+		ProductModel: model.NewProductsModel(conn, c.Cache),
+		PaymentModel: model.NewPaymentModel(conn, c.Cache),
+		WalletModel:  model.NewWalletModel(conn, c.Cache),
 	}
 }

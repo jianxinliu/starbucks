@@ -34,23 +34,20 @@ type User struct {
 type CreateOrderRequest struct {
 	OrderType string `json:"orderType" validator:"notblank oneof=cafe vip charge"`
 	ProductId string `json:"productId" validator:"notblank"`
-	UserId    string `json:"userId" validator:"notblank"`
 	Quantity  int    `json:"quantity" validator:"gt=0"`
 }
 
 type CreateOrderResponse struct {
 	BaseResponse
-	TrxNo string `json:"trxNo"`
+	OrderId string `json:"orderId"`
 }
 
 type OrderDoneReq struct {
 	OrderId string `json:"orderId" validator="notblank"`
-	Status  int    `json:"status" validator="gt=0"`
 }
 
 type PayReq struct {
-	OrderId string  `json:"orderId" validator="notblank"`
-	Amount  float64 `json:"amount" validator="gt=0"`
+	OrderId string `json:"orderId" validator="notblank"`
 }
 
 type WalletDescribeResp struct {

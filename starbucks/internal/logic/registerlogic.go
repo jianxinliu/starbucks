@@ -26,10 +26,11 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.BaseResponse, err error) {
 	resp = new(types.BaseResponse)
+	userId := utils.NewUserId()
 	user := &model.User{
 		UserName: req.UserName,
 		Password: req.Password,
-		UserId:   utils.NewUserId(),
+		UserId:   userId,
 		UserType: global.Normal.String(),
 	}
 	_, err = l.svcCtx.UserModel.Insert(l.ctx, user)
@@ -37,5 +38,11 @@ func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.BaseRe
 		resp.Message = err.Error()
 		return resp, nil
 	}
+
+	wallet := &model.Wallet{
+		UserId:  userId,
+		Balance: 0,
+	}
+	l.svcCtx.WalletModel.Insert(l.ctx, wallet)
 	return
 }
