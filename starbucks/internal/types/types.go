@@ -58,3 +58,17 @@ type WalletDescribeResp struct {
 type ChargeReq struct {
 	Amount float64 `json:"amount" validator:"gt=0"`
 }
+
+type AddProductGroupReq struct {
+	Name string `json:"name" validator:"notblank"`
+	Desc string `json:"desc"`
+}
+
+type AddProductReq struct {
+	Name        string  `json:"name" validator:"notblank"`
+	Description string  `json:"desc"`
+	Image       string  `json:"image"`
+	GroupId     string  `json:"groupId"`
+	Price       int     `json:"price"`
+	Discount    float64 `json:"discount"`
+}

@@ -68,4 +68,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithPrefix("/wallet"),
 	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CustomJwt},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/product_g/add",
+					Handler: AddProductGroupHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/product/add",
+					Handler: AddProductHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/ops"),
+	)
 }
