@@ -26,9 +26,12 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.LoginResponse, err error) {
+	resp = new(types.LoginResponse)
 	user, err := l.svcCtx.UserModel.FindOneByUserNameAndPassword(l.ctx, req.UserName, req.Password)
 	if err != nil {
-		return nil, err
+		resp.RetCode = 404
+		resp.Message = "用户未找到"
+		return resp, nil
 	}
 
 	iat := time.Now().Unix()

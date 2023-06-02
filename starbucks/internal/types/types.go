@@ -12,6 +12,7 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
+	BaseResponse
 	Token string `json:"token"`
 }
 
@@ -43,11 +44,11 @@ type CreateOrderResponse struct {
 }
 
 type OrderDoneReq struct {
-	OrderId string `json:"orderId" validator="notblank"`
+	OrderId string `json:"orderId" validator:"notblank"`
 }
 
 type PayReq struct {
-	OrderId string `json:"orderId" validator="notblank"`
+	OrderId string `json:"orderId" validator:"notblank"`
 }
 
 type WalletDescribeResp struct {
